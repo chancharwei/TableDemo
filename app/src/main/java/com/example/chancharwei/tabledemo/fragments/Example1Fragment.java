@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -106,29 +108,33 @@ public class Example1Fragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mEditTextRow = getActivity().findViewById(R.id.editTextRaw);
-        mEditTextRow.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mEditTextRow.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onEditorAction(TextView textView, int actionID, KeyEvent keyEvent) {
-                if(actionID == EditorInfo.IME_ACTION_DONE){
-                    Log.d(TAG,"Byron check GO!!!");
-                    InputMethodManager inputMethod = (InputMethodManager)textView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    sendInfoToActivity(MainActivity.InfoType.ROW_VALUE,mEditTextRow.getText().toString());
-                    return false;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s !=null ){
+                    sendInfoToActivity(MainActivity.InfoType.ROW_VALUE,s.toString());
                 }
-                return false;
             }
         });
         mEditTextColumn = getActivity().findViewById(R.id.editTextColumn);
-        mEditTextColumn.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mEditTextColumn.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onEditorAction(TextView textView, int actionID, KeyEvent keyEvent) {
-                if(actionID == EditorInfo.IME_ACTION_DONE){
-                    Log.d(TAG,"Byron check GO!!!");
-                    InputMethodManager inputMethod = (InputMethodManager)textView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    sendInfoToActivity(MainActivity.InfoType.CLOLUM_VALUE,mEditTextColumn.getText().toString());
-                    return false;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s !=null ){
+                    sendInfoToActivity(MainActivity.InfoType.CLOLUM_VALUE,s.toString());
                 }
-                return false;
             }
         });
         Log.d(TAG,"onViewCreated");
@@ -141,7 +147,7 @@ public class Example1Fragment extends Fragment {
             msg.arg1 = Integer.parseInt(info);
             sHandler.sendMessage(msg);
         }catch (NumberFormatException e){
-            Log.e(TAG,"Wrong input");
+            Log.e(TAG,"Wrong input with info = "+info);
         }
     }
 }
