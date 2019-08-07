@@ -136,7 +136,7 @@ public class Example3Fragment extends Fragment {
     public void onDestroy() {
         Log.d(TAG,"onDestroy");
         stopThread = true;
-        mThread.interrupt();
+        if(mThread != null)mThread.interrupt();
         super.onDestroy();
     }
 
