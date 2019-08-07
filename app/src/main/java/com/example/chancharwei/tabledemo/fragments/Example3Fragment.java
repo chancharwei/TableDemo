@@ -35,7 +35,7 @@ public class Example3Fragment extends Fragment {
     private TextView mSelectTextView;
     private TextView mSelectButtonTextView;
     private MyHandler mHandler;
-
+    private Thread mThread;
     private static class MyHandler extends Handler{
         private final WeakReference<MainActivity> mActivity;
         private final WeakReference<Example3Fragment> mFragment;
@@ -63,28 +63,7 @@ public class Example3Fragment extends Fragment {
         }
     }
 
-    private Thread mThread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            while(!stopThread){
-                Message message =  new Message();
-                Bundle bundle = new Bundle();
-                Random random = new Random();
-                int row = random.nextInt(mRow);
-                int column = random.nextInt(mColumn);
-                Log.d(TAG,"random row = "+row+" column = "+column);
-                bundle.putInt(RANDOM_ROW,row);
-                bundle.putInt(RANDOM_COLUMN,column);
-                message.obj = bundle;
-                mHandler.sendMessage(message);
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    });
+
 
     public Example3Fragment(){
     }
@@ -185,9 +164,29 @@ public class Example3Fragment extends Fragment {
     }
 
     private void createThreadForRandom(){
-        if(mThread != null){
-            mThread.start();
-        }
+        mThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(!stopThread){
+                    Message message =  new Message();
+                    Bundle bundle = new Bundle();
+                    Random random = new Random();
+                    int row = random.nextInt(mRow);
+                    int column = random.nextInt(mColumn);
+                    Log.d(TAG,"random row = "+row+" column = "+column);
+                    bundle.putInt(RANDOM_ROW,row);
+                    bundle.putInt(RANDOM_COLUMN,column);
+                    message.obj = bundle;
+                    mHandler.sendMessage(message);
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        mThread.start();
     }
     @SuppressLint("ClickableViewAccessibility")
     private synchronized void clearLastRandomColumnMark(){
