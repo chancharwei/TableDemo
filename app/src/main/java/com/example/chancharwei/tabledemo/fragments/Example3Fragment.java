@@ -36,6 +36,7 @@ public class Example3Fragment extends Fragment {
     private TextView mSelectButtonTextView;
     private MyHandler mHandler;
     private Thread mThread;
+    private boolean constructTableDone = false;
     private static class MyHandler extends Handler{
         private final WeakReference<MainActivity> mActivity;
         private final WeakReference<Example3Fragment> mFragment;
@@ -102,6 +103,10 @@ public class Example3Fragment extends Fragment {
     @Override
     public void onStart() {
         Log.d(TAG,"onStart");
+        if(constructTableDone){
+            stopThread = false;
+            createThreadForRandom();
+        }
         super.onStart();
     }
 
@@ -121,6 +126,8 @@ public class Example3Fragment extends Fragment {
     @Override
     public void onStop() {
         Log.d(TAG,"onStop");
+        stopThread = true;
+        if(mThread != null)mThread.interrupt();
         super.onStop();
     }
 
@@ -135,8 +142,6 @@ public class Example3Fragment extends Fragment {
     @Override
     public void onDestroy() {
         Log.d(TAG,"onDestroy");
-        stopThread = true;
-        if(mThread != null)mThread.interrupt();
         super.onDestroy();
     }
 
@@ -155,9 +160,8 @@ public class Example3Fragment extends Fragment {
             mColumn = rowColumnInfo[1];
         }
         if(mRow >= 0 && mColumn >= 0){
-            stopThread = false;
             constructTable(mRow,mColumn);
-            createThreadForRandom();
+            constructTableDone = true;
         }else{
             Toast.makeText(sActivity, "Please input row and column in example1", Toast.LENGTH_SHORT).show();
         }
